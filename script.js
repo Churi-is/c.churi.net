@@ -1,20 +1,13 @@
-/* ============================================================================
-   Window manager: dragging, focus (z-index), close → taskbar tray, restore.
-   Shared across all three .xp-window elements (#xpShoyan, #xpMc, #xpPlayer).
-   ============================================================================ */
-
 const TASKBAR_HEIGHT = 30;
-let topZ = 100;          // current top z-index for windows; taskbar sits at 100000
+let topZ = 100;
 
-// Registry of every managed window — used to render tray buttons.
-// `getTitle` lets the music player feed its dynamic track title into the tray.
 const windowMeta = {
   xpShoyan: { icon: '🔨', title: 'SHOYAN' },
   xpMc:     { icon: '🟩', title: 'play.lemoncloud.org' },
   xpPlayer: { icon: '🎵', getTitle: () => document.getElementById('xpTitlebarText').textContent || 'now_playing.mp3' }
 };
 
-const closedWindows = new Set();   // window IDs currently hidden in the tray
+const closedWindows = new Set();
 const tbTray = document.getElementById('tbTray');
 
 function bringToFront(win) {
@@ -25,7 +18,7 @@ function bringToFront(win) {
 function closeWindow(win) {
   const id = win.id;
   if (!windowMeta[id]) return;
-  if (id === 'xpPlayer') widget.pause();   // keep existing music-pause-on-close behaviour
+  if (id === 'xpPlayer') widget.pause();
   win.classList.add('closed');
   closedWindows.add(id);
   renderTray();
@@ -64,7 +57,6 @@ function renderTray() {
   });
 }
 
-/* ----- Dragging (Pointer Events: covers mouse + touch + pen in one path) ----- */
 function makeDraggable(win) {
   const titlebar = win.querySelector('.xp-titlebar');
   if (!titlebar) return;
@@ -72,10 +64,9 @@ function makeDraggable(win) {
   let dragging = false;
   let startX = 0, startY = 0;
   let startLeft = 0, startTop = 0;
-  let movedToExplicitPos = false;   // has this window been dragged at least once?
+  let movedToExplicitPos = false;
 
   titlebar.addEventListener('pointerdown', (e) => {
-    // Ignore presses on the min/close buttons
     if (e.target.closest('.xp-titlebar-buttons')) return;
     if (win.classList.contains('closed')) return;
 
@@ -83,8 +74,6 @@ function makeDraggable(win) {
     startX = e.clientX;
     startY = e.clientY;
 
-    // On first drag ever: convert from `bottom/right` anchoring to explicit left/top,
-    // so subsequent style.left/top changes don't fight the original CSS.
     if (!movedToExplicitPos) {
       const rect = win.getBoundingClientRect();
       startLeft = rect.left;
@@ -112,10 +101,9 @@ function makeDraggable(win) {
     let newLeft = startLeft + dx;
     let newTop  = startTop  + dy;
 
-    // Clamp so the titlebar stays visible and the window can't slide under the taskbar.
     newTop = Math.max(0, Math.min(newTop, window.innerHeight - TASKBAR_HEIGHT - 24));
-    newLeft = Math.min(newLeft, window.innerWidth - 40);                // keep ≥ 40px visible on the right
-    newLeft = Math.max(newLeft, 40 - win.offsetWidth);                  // keep ≥ 40px visible on the left
+    newLeft = Math.min(newLeft, window.innerWidth - 40);
+    newLeft = Math.max(newLeft, 40 - win.offsetWidth);
 
     win.style.left = newLeft + 'px';
     win.style.top  = newTop  + 'px';
@@ -131,17 +119,14 @@ function makeDraggable(win) {
   titlebar.addEventListener('pointercancel', endDrag);
 }
 
-// Wire up all three windows
 ['xpShoyan', 'xpMc', 'xpPlayer'].forEach(id => {
   const w = document.getElementById(id);
   if (w) {
     makeDraggable(w);
-    // Click anywhere on the window brings it to front, not just the titlebar.
     w.addEventListener('pointerdown', () => bringToFront(w));
   }
 });
 
-// ----- Taskbar clock -----
 function updateClock() {
   const now = new Date();
   const h = String(now.getHours()).padStart(2, '0');
@@ -150,11 +135,6 @@ function updateClock() {
 }
 updateClock();
 setInterval(updateClock, 10000);
-
-/* ============================================================================
-   SoundCloud music player — original behaviour preserved, with close routed
-   through closeWindow() so the player goes to the tray instead of vanishing.
-   ============================================================================ */
 
 const playlist = [
   "https://soundcloud.com/korewamoemoemoe/connection",
@@ -191,11 +171,11 @@ function refreshNowPlaying() {
     } else {
       artwork.style.backgroundImage = '';
     }
-    renderTray();   // keep tray button label fresh if the music window is closed
+    renderTray();
   });
 }
 function loadTrack(index, autoplay) {
-  currentIndex = (index + playlist.length) % playlist.length; // wraps around both directions
+  currentIndex = (index + playlist.length) % playlist.length;
   const url = playlist[currentIndex];
   widget.load(url, {
     auto_play: autoplay,
@@ -240,17 +220,11 @@ minBtn.addEventListener('click', () => {
 });
 closeBtn.addEventListener('click', () => closeWindow(win));
 
-// Volume slider: 0-100, feeds straight into the SoundCloud widget API
 volumeSlider.addEventListener('input', () => {
   const vol = Number(volumeSlider.value);
   widget.setVolume(vol);
   volumeIcon.textContent = vol === 0 ? '🔇' : (vol < 50 ? '🔉' : '🔊');
 });
-
-/* ============================================================================
-   SHOYAN construction window — minimize toggles body, close → tray.
-   The GIF itself opens YouTube via the wrapping <a> tag in index.html.
-   ============================================================================ */
 
 const shoyanWin = document.getElementById('xpShoyan');
 const shoyanMinBtn = document.getElementById('shoyanMinBtn');
@@ -262,11 +236,6 @@ if (shoyanMinBtn) {
 if (shoyanCloseBtn) {
   shoyanCloseBtn.addEventListener('click', () => closeWindow(shoyanWin));
 }
-
-/* ============================================================================
-   Minecraft server status window — free mcsrvstat.us API, refresh every 60s.
-   Version/Software fields removed per request; only Status, Players, MOTD shown.
-   ============================================================================ */
 
 const MC_SERVER = 'play.lemoncloud.org';
 const mcWin       = document.getElementById('xpMc');
@@ -289,7 +258,6 @@ function setOffline(msg) {
 }
 
 async function refreshMcStatus() {
-  // Bust cache so we always get fresh player counts (mcsrvstat caches server-side anyway)
   const url = `https://api.mcsrvstat.us/3/${encodeURIComponent(MC_SERVER)}?t=${Date.now()}`;
   try {
     const res = await fetch(url);
@@ -330,4 +298,4 @@ if (mcCloseBtn) {
 }
 
 refreshMcStatus();
-setInterval(refreshMcStatus, 60000); // refresh every 60s
+setInterval(refreshMcStatus, 60000);

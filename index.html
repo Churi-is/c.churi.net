@@ -9,7 +9,7 @@
     <script src="./script.js" defer></script>
   </head>
   <body>
-    <!-- ASCII art title (CHURI in block letters) -->
+    <img id="fumo" src="https://media.tenor.com/Mw3fsm5V-loAAAAj/cirno-fumo.gif" alt="cirno fumo" />
     <pre class="ascii-title" aria-label="CHURI">█████████████████████████████████████████████████████████████████████████████████████████████████████
 █░░░░░░░░░░░░░░███████████░░░░░░░░░░░░░░█░░░░░░██░░░░░░█░░░░░░██░░░░░░█░░░░░░░░░░░░░░░░███░░░░░░░░░░█
 █░░▄▀▄▀▄▀▄▀▄▀░░███████████░░▄▀▄▀▄▀▄▀▄▀░░█░░▄▀░░██░░▄▀░░█░░▄▀░░██░░▄▀░░█░░▄▀▄▀▄▀▄▀▄▀▄▀░░███░░▄▀▄▀▄▀░░█
@@ -24,7 +24,6 @@
 █░░░░░░░░░░░░░░█░░░░░░████░░░░░░░░░░░░░░█░░░░░░██░░░░░░█░░░░░░░░░░░░░░█░░░░░░██░░░░░░░░░░█░░░░░░░░░░█
 █████████████████████████████████████████████████████████████████████████████████████████████████████</pre>
 
-    <!-- Main body box: quote + intro + 4 link columns -->
     <div class="main-box">
       <div class="main-box-titlebar">
         <span class="main-box-icon">📄</span>
@@ -46,7 +45,6 @@
         </div>
       </div>
     </div>
-    <!-- SHOYAN construction GIF wrapped in an XP window; click GIF opens YouTube -->
     <div class="xp-window xp-window-left" id="xpShoyan">
       <div class="xp-titlebar">
         <div class="xp-titlebar-title">
@@ -69,7 +67,6 @@
         </a>
       </div>
     </div>
-    <!-- Minecraft server status window (under + offset right of SHOYAN) -->
     <div class="xp-window xp-window-mc" id="xpMc">
       <div class="xp-titlebar">
         <div class="xp-titlebar-title">
@@ -96,7 +93,6 @@
         </div>
       </div>
     </div>
-    <!-- Hidden SoundCloud player - script.js swaps its src as you skip tracks -->
     <iframe id="scPlayer" class="sc-hidden-player"
       src="https://w.soundcloud.com/player/?url=https%3A%2F%2Fsoundcloud.com%2Fkorewamoemoemoe%2Fconnection&auto_play=false">
     </iframe>
@@ -138,7 +134,6 @@
         </div>
       </div>
     </div>
-    <!-- XP-style taskbar: holds tray buttons for closed windows -->
     <div id="taskbar">
       <button id="startBtn" class="tb-start" type="button" title="Start">
         <span class="tb-start-flag">&#9654;</span>

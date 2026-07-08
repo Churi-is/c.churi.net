@@ -2,8 +2,7 @@ body {
     font-family: Sans-serif;
     text-align: center;
     margin-top: 30px;
-    margin-bottom: 50px; /* clears the taskbar */
-    /* Background image: cover + fixed so it fills the viewport without scrolling artifacts */
+    margin-bottom: 50px;
     background-image: url('hell on Earth cute 90s.jpg');
     background-size: cover;
     background-position: center center;
@@ -16,7 +15,18 @@ body {
     border: 2px solid #000;
 }
 
-/* ===== ASCII art title (CHURI in block letters) ===== */
+#fumo {
+    position: fixed;
+    top: 8px;
+    right: 8px;
+    width: 120px;
+    height: auto;
+    z-index: 50;
+    image-rendering: pixelated;
+    image-rendering: crisp-edges;
+    pointer-events: none;
+}
+
 .ascii-title {
     font-family: 'Courier New', Consolas, monospace;
     font-size: 9px;
@@ -41,12 +51,11 @@ body {
     text-align: left;
 }
 
-/* ===== Main body box (XP Notepad-styled, static, centered) ===== */
 .main-box {
     width: 640px;
     max-width: calc(100vw - 32px);
     margin: 0 auto 24px;
-    background: #ece9d8;            /* XP window body grey */
+    background: #ece9d8;
     border: 1px solid #0831d9;
     border-radius: 8px 8px 3px 3px;
     box-shadow: 2px 2px 12px rgba(0,0,0,0.5);
@@ -69,7 +78,7 @@ body {
 .main-box-icon { font-size: 13px; }
 .main-box-body {
     padding: 16px 20px 14px;
-    background: #ffffff;            /* notepad-white body */
+    background: #ffffff;
     border-top: 1px solid #aca899;
 }
 .intro-quote {
@@ -96,7 +105,6 @@ body {
     line-height: 1.6;
     color: #222;
 }
-/* 4-column link row pinned to the bottom of the box */
 .link-columns {
     display: flex;
     gap: 8px;
@@ -128,7 +136,6 @@ body {
     box-shadow: inset 1px 1px 3px rgba(0,0,0,0.3);
 }
 
-/* ===== Music Widget ===== */
 .xp-window {
     position: fixed;
     bottom: 38px;
@@ -136,7 +143,7 @@ body {
     width: 320px;
     display: flex;
     flex-direction: column;
-    background: #ece9d8; /* classic XP window body grey */
+    background: #ece9d8;
     border: 1px solid #0831d9;
     border-radius: 8px 8px 3px 3px;
     box-shadow: 2px 2px 8px rgba(0,0,0,0.4);
@@ -144,16 +151,14 @@ body {
     overflow: hidden;
     z-index: 100;
     user-select: none;
-    text-align: left; /* override the page's centered text-align */
+    text-align: left;
 }
-/* While being dragged: drop shadows get snappier, no transitions, slight lift */
 .xp-window.dragging {
     box-shadow: 4px 4px 14px rgba(0,0,0,0.5);
     cursor: grabbing;
 }
 .xp-window.closed { display: none !important; }
 
-/* Titlebar spans the full width, on top */
 .xp-titlebar {
     height: 24px;
     flex-shrink: 0;
@@ -165,7 +170,7 @@ body {
     color: white;
     font-weight: bold;
     font-size: 12px;
-    cursor: move; /* signals draggable, even if you keep it static */
+    cursor: move;
 }
 .xp-titlebar-title {
     display: flex;
@@ -219,7 +224,6 @@ body {
 }
 .xp-window.minimized .xp-body { display: none; }
 
-/* Album art: fills the left side of the window's body, not the titlebar */
 .xp-artwork {
     align-self: stretch;
     width: 70px;
@@ -231,19 +235,17 @@ body {
     background-position: center;
 }
 
-/* Right-hand column: track info + controls, next to the artwork */
 .xp-right {
     display: flex;
     flex-direction: column;
     flex: 1;
-    min-width: 0; /* lets ellipsis actually kick in inside a flex child */
+    min-width: 0;
     gap: 6px;
     justify-content: center;
 }
 
-/* Track info */
 .xp-track-info {
-    min-width: 0; /* allow children to actually truncate */
+    min-width: 0;
 }
 .xp-track-title {
     font-size: 11px;
@@ -261,7 +263,6 @@ body {
     text-overflow: ellipsis;
 }
 
-/* Transport row (prev / play / next / scrubber) */
 .xp-transport {
     display: flex;
     align-items: center;
@@ -286,7 +287,6 @@ body {
     height: 34px;
 }
 
-/* CSS-drawn triangles, no icon files needed */
 .xp-icon-prev, .xp-icon-next {
     width: 0; height: 0;
     border-top: 6px solid transparent;
@@ -295,7 +295,6 @@ body {
 .xp-icon-prev { border-right: 9px solid #1a3a6a; margin-right: 2px; }
 .xp-icon-next { border-left: 9px solid #1a3a6a; margin-left: 2px; }
 
-/* play triangle / pause bars */
 .xp-play .icon-play {
     width: 0; height: 0;
     border-top: 8px solid transparent;
@@ -323,7 +322,6 @@ body {
 .xp-play.playing .icon-play { display: none; }
 .xp-play.playing .icon-pause { display: block; }
 
-/* fake scrolling "visualizer" bar */
 .xp-scrubber {
     flex: 1;
     height: 10px;
@@ -341,7 +339,6 @@ body {
     transition: width 0.2s linear;
 }
 
-/* Volume row */
 .xp-volume {
     display: flex;
     align-items: center;
@@ -387,22 +384,19 @@ body {
     position: absolute;
     width: 300px;
     height: 166px;
-    left: -9999px; /* pushed off-screen, but still has real layout dimensions */
+    left: -9999px;
     top: -9999px;
     border: 0;
 }
 
-/* ===== SHOYAN Construction Window ===== */
-/* Same XP chrome as the music player, but anchored bottom-left and slightly raised so it sits "nearer but not at" the bottom edge. */
 .xp-window-left {
     position: fixed;
     left: 16px;
-    bottom: 110px; /* lifted off the taskbar so it's not flush with the bottom */
+    bottom: 110px;
     width: 420px;
     z-index: 100;
 }
 
-/* Body override: single image, no flex row */
 .xp-body-shoyan {
     padding: 6px;
     display: block;
@@ -411,7 +405,7 @@ body {
 
 .shoyan-link {
     display: block;
-    line-height: 0; /* removes inline-image gap */
+    line-height: 0;
     outline: none;
 }
 .shoyan-link:focus-visible {
@@ -419,8 +413,8 @@ body {
     outline-offset: 1px;
 }
 .shoyan-link .construction {
-    margin-top: 0;            /* reset the standalone-rule spacing */
-    border: 1px solid #000;   /* tidy 1px inside the window chrome */
+    margin-top: 0;
+    border: 1px solid #000;
     width: 100%;
     height: auto;
     display: block;
@@ -430,13 +424,10 @@ body {
     filter: brightness(1.08) saturate(1.1);
 }
 
-/* ===== Minecraft Server Status Window =====
-   Sits under the SHOYAN window, offset a bit further right than
-   shoyan's left:16 (so left:96), pinned just above the taskbar. */
 .xp-window-mc {
     position: fixed;
-    left: 96px;          /* offset right of shoyan's left:16 */
-    bottom: 38px;        /* clears the 30px taskbar + a sliver of gap */
+    left: 96px;
+    bottom: 38px;
     width: 260px;
     z-index: 100;
 }
@@ -455,7 +446,7 @@ body {
     flex-shrink: 0;
     border: 1px solid #000;
     background: #b7cbe8 center/cover no-repeat;
-    image-rendering: pixelated;        /* keep MC favicon crisp */
+    image-rendering: pixelated;
     image-rendering: crisp-edges;
 }
 .mc-info {
@@ -505,7 +496,6 @@ body {
     font-style: italic;
 }
 
-/* ===== XP Taskbar / Tray for closed windows ===== */
 #taskbar {
     position: fixed;
     left: 0;
@@ -520,11 +510,10 @@ body {
     border-top: 1px solid #0a3a8c;
     box-shadow: 0 -1px 0 rgba(255,255,255,0.3) inset;
     font-family: Tahoma, Verdana, sans-serif;
-    z-index: 100000;   /* always above windows */
+    z-index: 100000;
     user-select: none;
 }
 
-/* "start" button — XP-style green-ish gradient slab on the left */
 .tb-start {
     flex-shrink: 0;
     height: 30px;
@@ -553,7 +542,6 @@ body {
     display: inline-block;
 }
 
-/* Tray area: holds one button per closed window */
 .tb-tray {
     flex: 1;
     display: flex;
@@ -562,12 +550,7 @@ body {
     min-width: 0;
     overflow: hidden;
 }
-.tb-tray:empty::before {
-    content: "";
-    /* invisible spacer — keeps layout stable when nothing is closed */
-}
 
-/* Tray button for each closed window — XP-style raised taskbar button */
 .tb-item {
     min-width: 100px;
     max-width: 180px;
@@ -603,7 +586,6 @@ body {
     min-width: 0;
 }
 
-/* Clock on the far right, in a sunken bezel */
 .tb-clock {
     flex-shrink: 0;
     height: 22px;
