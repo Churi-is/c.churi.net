@@ -1,9 +1,305 @@
 body {
-font-family: Sans-serif;
-text-align: center;
-margin-top: 50px;
+    font-family: Sans-serif;
+    text-align: center;
+    margin-top: 50px;
 }
 .construction {
-margin-top: 20px;
-border: 2px solid #000;
+    margin-top: 20px;
+    border: 2px solid #000;
+}
+
+/* ===== Music Widget ===== */
+.xp-window {
+    position: fixed;
+    bottom: 16px;
+    right: 16px;
+    width: 320px;
+    display: flex;
+    flex-direction: column;
+    background: #ece9d8; /* classic XP window body grey */
+    border: 1px solid #0831d9;
+    border-radius: 8px 8px 3px 3px;
+    box-shadow: 2px 2px 8px rgba(0,0,0,0.4);
+    font-family: Tahoma, Verdana, sans-serif;
+    overflow: hidden;
+    z-index: 9999;
+    user-select: none;
+    text-align: left; /* override the page's centered text-align */
+}
+
+/* Titlebar spans the full width, on top */
+.xp-titlebar {
+    height: 24px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 2px 3px 2px 6px;
+    background: linear-gradient(180deg, #0058e0 0%, #3d94ff 8%, #1567e6 40%, #0850d8 88%, #003bcb 100%);
+    color: white;
+    font-weight: bold;
+    font-size: 12px;
+    cursor: move; /* signals draggable, even if you keep it static */
+}
+.xp-titlebar-title {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    text-shadow: 1px 1px 1px rgba(0,0,0,0.4);
+    flex: 1;
+    min-width: 0;
+}
+.xp-titlebar-title span {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+.xp-titlebar-icon {
+    width: 14px;
+    height: 14px;
+    flex-shrink: 0;
+}
+.xp-titlebar-buttons {
+    display: flex;
+    gap: 2px;
+    flex-shrink: 0;
+}
+.xp-btn {
+    width: 20px;
+    height: 18px;
+    border: 1px solid rgba(255,255,255,0.6);
+    border-radius: 3px;
+    background: linear-gradient(180deg, #4488ff 0%, #1650d0 100%);
+    color: white;
+    font-size: 11px;
+    font-weight: bold;
+    line-height: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+}
+.xp-btn:hover { filter: brightness(1.2); }
+.xp-btn.close { background: linear-gradient(180deg, #ff6a5a 0%, #d4281a 100%); }
+
+.xp-body {
+    padding: 8px 10px 10px;
+    display: flex;
+    flex-direction: row;
+    gap: 8px;
+}
+.xp-window.minimized .xp-body { display: none; }
+
+/* Album art: fills the left side of the window's body, not the titlebar */
+.xp-artwork {
+    align-self: stretch;
+    width: 70px;
+    flex-shrink: 0;
+    box-sizing: border-box;
+    border: 1px solid #000;
+    background: #b7cbe8 url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="%231a3a6a" d="M12 3v10.55A4 4 0 1 0 14 17V7h4V3h-6z"/></svg>') center/40% no-repeat;
+    background-size: cover;
+    background-position: center;
+}
+
+/* Right-hand column: track info + controls, next to the artwork */
+.xp-right {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-width: 0; /* lets ellipsis actually kick in inside a flex child */
+    gap: 6px;
+    justify-content: center;
+}
+
+/* Track info */
+.xp-track-info {
+    min-width: 0; /* allow children to actually truncate */
+}
+.xp-track-title {
+    font-size: 11px;
+    font-weight: bold;
+    color: #222;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.xp-track-artist {
+    font-size: 10px;
+    color: #555;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Transport row (prev / play / next / scrubber) */
+.xp-transport {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+.xp-icon-btn {
+    width: 26px;
+    height: 26px;
+    border-radius: 4px;
+    border: 1px solid #7a9cc6;
+    background: linear-gradient(180deg, #ffffff 0%, #d9e4f5 45%, #b7cbe8 55%, #d9e4f5 100%);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.8), 1px 1px 2px rgba(0,0,0,0.3);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+.xp-icon-btn:active { box-shadow: inset 1px 1px 3px rgba(0,0,0,0.3); }
+.xp-play {
+    width: 34px;
+    height: 34px;
+}
+
+/* CSS-drawn triangles, no icon files needed */
+.xp-icon-prev, .xp-icon-next {
+    width: 0; height: 0;
+    border-top: 6px solid transparent;
+    border-bottom: 6px solid transparent;
+}
+.xp-icon-prev { border-right: 9px solid #1a3a6a; margin-right: 2px; }
+.xp-icon-next { border-left: 9px solid #1a3a6a; margin-left: 2px; }
+
+/* play triangle / pause bars */
+.xp-play .icon-play {
+    width: 0; height: 0;
+    border-top: 8px solid transparent;
+    border-bottom: 8px solid transparent;
+    border-left: 13px solid #1a3a6a;
+    margin-left: 3px;
+}
+.xp-play .icon-pause {
+    display: none;
+    width: 14px;
+    height: 16px;
+    position: relative;
+}
+.xp-play .icon-pause::before,
+.xp-play .icon-pause::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    width: 5px;
+    height: 16px;
+    background: #1a3a6a;
+}
+.xp-play .icon-pause::before { left: 0; }
+.xp-play .icon-pause::after { left: 9px; }
+.xp-play.playing .icon-play { display: none; }
+.xp-play.playing .icon-pause { display: block; }
+
+/* fake scrolling "visualizer" bar */
+.xp-scrubber {
+    flex: 1;
+    height: 10px;
+    background: repeating-linear-gradient(90deg, #4488ff 0 2px, transparent 2px 4px);
+    border: 1px solid #7a9cc6;
+    border-radius: 2px;
+    overflow: hidden;
+    position: relative;
+}
+.xp-scrubber-fill {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg, #0058e0, #3d94ff);
+    width: 0%;
+    transition: width 0.2s linear;
+}
+
+/* Volume row */
+.xp-volume {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+.xp-volume-icon {
+    width: 14px;
+    flex-shrink: 0;
+    font-size: 11px;
+    text-align: center;
+    color: #1a3a6a;
+}
+.xp-volume-slider {
+    flex: 1;
+    height: 4px;
+    -webkit-appearance: none;
+    appearance: none;
+    background: repeating-linear-gradient(90deg, #4488ff 0 2px, transparent 2px 4px);
+    border: 1px solid #7a9cc6;
+    border-radius: 2px;
+    cursor: pointer;
+    accent-color: #0058e0;
+}
+.xp-volume-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 10px;
+    height: 14px;
+    border-radius: 2px;
+    background: linear-gradient(180deg, #ffffff 0%, #d9e4f5 45%, #b7cbe8 55%, #d9e4f5 100%);
+    border: 1px solid #7a9cc6;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.8);
+}
+.xp-volume-slider::-moz-range-thumb {
+    width: 10px;
+    height: 14px;
+    border-radius: 2px;
+    background: linear-gradient(180deg, #ffffff 0%, #d9e4f5 45%, #b7cbe8 55%, #d9e4f5 100%);
+    border: 1px solid #7a9cc6;
+}
+
+.sc-hidden-player {
+    position: absolute;
+    width: 300px;
+    height: 166px;
+    left: -9999px; /* pushed off-screen, but still has real layout dimensions */
+    top: -9999px;
+    border: 0;
+}
+
+/* ===== SHOYAN Construction Window ===== */
+/* Same XP chrome as the music player, but anchored bottom-left and slightly raised so it sits "nearer but not at" the bottom edge. */
+.xp-window-left {
+    position: fixed;
+    left: 16px;
+    bottom: 90px; /* lifted off the floor so it's not flush with the bottom */
+    width: 420px;
+    z-index: 9999;
+}
+
+/* Body override: single image, no flex row */
+.xp-body-shoyan {
+    padding: 6px;
+    display: block;
+}
+.xp-window.minimized .xp-body-shoyan { display: none; }
+
+.shoyan-link {
+    display: block;
+    line-height: 0; /* removes inline-image gap */
+    outline: none;
+}
+.shoyan-link:focus-visible {
+    outline: 2px solid #0058e0;
+    outline-offset: 1px;
+}
+.shoyan-link .construction {
+    margin-top: 0;            /* reset the standalone-rule spacing */
+    border: 1px solid #000;   /* tidy 1px inside the window chrome */
+    width: 100%;
+    height: auto;
+    display: block;
+    cursor: pointer;
+}
+.shoyan-link:hover .construction {
+    filter: brightness(1.08) saturate(1.1);
 }

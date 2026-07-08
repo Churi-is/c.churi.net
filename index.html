@@ -5,11 +5,76 @@
     <title>C. Churi Home</title>
     <link rel="icon" href="./favicon.ico" type="image/x-icon" />
     <link rel="stylesheet" href="./stylesheet.css" />
-    <title>C. Churi Home</title>
+    <script src="https://w.soundcloud.com/player/api.js"></script>
+    <script src="./script.js" defer></script>
   </head>
   <body>
     <h1>C. Churi Home</h1>
     <p>Under Construction...</p>
-    <img class="construction" src="https://media1.tenor.com/m/J1kq1w0eB2AAAAAC/sasiad-o-6.gif" alt="Under Construction" />
+    <!-- SHOYAN construction GIF wrapped in an XP window; click GIF opens YouTube -->
+    <div class="xp-window xp-window-left" id="xpShoyan">
+      <div class="xp-titlebar">
+        <div class="xp-titlebar-title">
+          <span class="xp-titlebar-icon">🔨</span>
+          <span>SHOYAN</span>
+        </div>
+        <div class="xp-titlebar-buttons">
+          <button class="xp-btn" id="shoyanMinBtn" title="Minimize" aria-label="Minimize">_</button>
+          <button class="xp-btn close" id="shoyanCloseBtn" title="Close" aria-label="Close">X</button>
+        </div>
+      </div>
+      <div class="xp-body xp-body-shoyan">
+        <a class="shoyan-link"
+           href="https://www.youtube.com/channel/UCdf5QHEpfrg3KydeT3iD2IQ"
+           target="_blank" rel="noopener noreferrer"
+           title="Open SHOYAN on YouTube">
+          <img class="construction"
+               src="https://media1.tenor.com/m/J1kq1w0eB2AAAAAC/sasiad-o-6.gif"
+               alt="Under Construction — click to open SHOYAN on YouTube" />
+        </a>
+      </div>
+    </div>
+    <!-- Hidden SoundCloud player - script.js swaps its src as you skip tracks -->
+    <iframe id="scPlayer" class="sc-hidden-player"
+      src="https://w.soundcloud.com/player/?url=https%3A%2F%2Fsoundcloud.com%2Fkorewamoemoemoe%2Fconnection&auto_play=false">
+    </iframe>
+    <div class="xp-window" id="xpPlayer">
+      <div class="xp-titlebar">
+        <div class="xp-titlebar-title">
+          <span class="xp-titlebar-icon">🎵</span>
+          <span id="xpTitlebarText">Loading...</span>
+        </div>
+        <div class="xp-titlebar-buttons">
+          <button class="xp-btn" id="xpMinBtn" title="Minimize" aria-label="Minimize">_</button>
+          <button class="xp-btn close" id="xpCloseBtn" title="Close" aria-label="Close">X</button>
+        </div>
+      </div>
+      <div class="xp-body">
+        <div class="xp-artwork" id="xpArtwork"></div>
+        <div class="xp-right">
+          <div class="xp-track-info">
+            <div class="xp-track-title" id="xpTrackTitle">Loading...</div>
+            <div class="xp-track-artist" id="xpTrackArtist"></div>
+          </div>
+          <div class="xp-transport">
+            <button class="xp-icon-btn" id="xpPrevBtn" aria-label="Previous track">
+              <span class="xp-icon-prev"></span>
+            </button>
+            <button class="xp-icon-btn xp-play" id="xpPlayBtn" aria-label="Play or pause track">
+              <span class="icon-play"></span>
+              <span class="icon-pause"></span>
+            </button>
+            <button class="xp-icon-btn" id="xpNextBtn" aria-label="Next track">
+              <span class="xp-icon-next"></span>
+            </button>
+            <div class="xp-scrubber"><div class="xp-scrubber-fill" id="xpScrubFill"></div></div>
+          </div>
+          <div class="xp-volume">
+            <span class="xp-volume-icon" id="xpVolumeIcon">🔊</span>
+            <input type="range" class="xp-volume-slider" id="xpVolumeSlider" min="0" max="100" value="80" aria-label="Volume">
+          </div>
+        </div>
+      </div>
+    </div>
   </body>
 </html>
