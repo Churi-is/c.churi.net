@@ -9,8 +9,43 @@
     <script src="./script.js" defer></script>
   </head>
   <body>
-    <h1>C. Churi Home</h1>
-    <p>Under Construction...</p>
+    <!-- ASCII art title (CHURI in block letters) -->
+    <pre class="ascii-title" aria-label="CHURI">█████████████████████████████████████████████████████████████████████████████████████████████████████
+█░░░░░░░░░░░░░░███████████░░░░░░░░░░░░░░█░░░░░░██░░░░░░█░░░░░░██░░░░░░█░░░░░░░░░░░░░░░░███░░░░░░░░░░█
+█░░▄▀▄▀▄▀▄▀▄▀░░███████████░░▄▀▄▀▄▀▄▀▄▀░░█░░▄▀░░██░░▄▀░░█░░▄▀░░██░░▄▀░░█░░▄▀▄▀▄▀▄▀▄▀▄▀░░███░░▄▀▄▀▄▀░░█
+█░░▄▀░░░░░░░░░░███████████░░▄▀░░░░░░░░░░█░░▄▀░░██░░▄▀░░█░░▄▀░░██░░▄▀░░█░░▄▀░░░░░░░░▄▀░░███░░░░▄▀░░░░█
+█░░▄▀░░███████████████████░░▄▀░░█████████░░▄▀░░██░░▄▀░░█░░▄▀░░██░░▄▀░░█░░▄▀░░████░░▄▀░░█████░░▄▀░░███
+█░░▄▀░░███████████████████░░▄▀░░█████████░░▄▀░░░░░░▄▀░░█░░▄▀░░██░░▄▀░░█░░▄▀░░░░░░░░▄▀░░█████░░▄▀░░███
+█░░▄▀░░███████████████████░░▄▀░░█████████░░▄▀▄▀▄▀▄▀▄▀░░█░░▄▀░░██░░▄▀░░█░░▄▀▄▀▄▀▄▀▄▀▄▀░░█████░░▄▀░░███
+█░░▄▀░░███████████████████░░▄▀░░█████████░░▄▀░░░░░░▄▀░░█░░▄▀░░██░░▄▀░░█░░▄▀░░░░░░▄▀░░░░█████░░▄▀░░███
+█░░▄▀░░███████████████████░░▄▀░░█████████░░▄▀░░██░░▄▀░░█░░▄▀░░██░░▄▀░░█░░▄▀░░██░░▄▀░░███████░░▄▀░░███
+█░░▄▀░░░░░░░░░░█░░░░░░████░░▄▀░░░░░░░░░░█░░▄▀░░██░░▄▀░░█░░▄▀░░░░░░▄▀░░█░░▄▀░░██░░▄▀░░░░░░█░░░░▄▀░░░░█
+█░░▄▀▄▀▄▀▄▀▄▀░░█░░▄▀░░████░░▄▀▄▀▄▀▄▀▄▀░░█░░▄▀░░██░░▄▀░░█░░▄▀▄▀▄▀▄▀▄▀░░█░░▄▀░░██░░▄▀▄▀▀▀░░█░░▄▀▄▀▄▀░░█
+█░░░░░░░░░░░░░░█░░░░░░████░░░░░░░░░░░░░░█░░░░░░██░░░░░░█░░░░░░░░░░░░░░█░░░░░░██░░░░░░░░░░█░░░░░░░░░░█
+█████████████████████████████████████████████████████████████████████████████████████████████████████</pre>
+
+    <!-- Main body box: quote + intro + 4 link columns -->
+    <div class="main-box">
+      <div class="main-box-titlebar">
+        <span class="main-box-icon">📄</span>
+        <span>welcome.txt - Notepad</span>
+      </div>
+      <div class="main-box-body">
+        <blockquote class="intro-quote">
+          "I don't know if you have a website or not but let me tell you something... writing an intro is hard."
+          <cite>- Kamran's Home</cite>
+        </blockquote>
+        <p class="intro-text">
+          I am C. (Cap. (Captain) Churi. I like computers and electricity. I'm too old for this and spent too long on this.
+        </p>
+        <div class="link-columns">
+          <a class="link-cell" href="https://example.com" target="_blank" rel="noopener noreferrer">PLACE</a>
+          <a class="link-cell" href="https://wikipedia.org" target="_blank" rel="noopener noreferrer">PLACE</a>
+          <a class="link-cell" href="https://github.com" target="_blank" rel="noopener noreferrer">PLACE</a>
+          <a class="link-cell" href="https://youtube.com" target="_blank" rel="noopener noreferrer">PLACE</a>
+        </div>
+      </div>
+    </div>
     <!-- SHOYAN construction GIF wrapped in an XP window; click GIF opens YouTube -->
     <div class="xp-window xp-window-left" id="xpShoyan">
       <div class="xp-titlebar">
@@ -32,6 +67,33 @@
                src="https://media1.tenor.com/m/J1kq1w0eB2AAAAAC/sasiad-o-6.gif"
                alt="Under Construction — click to open SHOYAN on YouTube" />
         </a>
+      </div>
+    </div>
+    <!-- Minecraft server status window (under + offset right of SHOYAN) -->
+    <div class="xp-window xp-window-mc" id="xpMc">
+      <div class="xp-titlebar">
+        <div class="xp-titlebar-title">
+          <span class="xp-titlebar-icon">🟩</span>
+          <span>play.lemoncloud.org</span>
+        </div>
+        <div class="xp-titlebar-buttons">
+          <button class="xp-btn" id="mcMinBtn" title="Minimize" aria-label="Minimize">_</button>
+          <button class="xp-btn close" id="mcCloseBtn" title="Close" aria-label="Close">X</button>
+        </div>
+      </div>
+      <div class="xp-body xp-body-mc">
+        <div class="mc-icon" id="mcIcon" title="Server icon"></div>
+        <div class="mc-info">
+          <div class="mc-row">
+            <span class="mc-label">Status:</span>
+            <span class="mc-value" id="mcStatus">Checking...</span>
+          </div>
+          <div class="mc-row">
+            <span class="mc-label">Players:</span>
+            <span class="mc-value" id="mcPlayers">--</span>
+          </div>
+          <div class="mc-motd" id="mcMotd"></div>
+        </div>
       </div>
     </div>
     <!-- Hidden SoundCloud player - script.js swaps its src as you skip tracks -->
@@ -75,6 +137,15 @@
           </div>
         </div>
       </div>
+    </div>
+    <!-- XP-style taskbar: holds tray buttons for closed windows -->
+    <div id="taskbar">
+      <button id="startBtn" class="tb-start" type="button" title="Start">
+        <span class="tb-start-flag">&#9654;</span>
+        <span class="tb-start-text">start</span>
+      </button>
+      <div id="tbTray" class="tb-tray" aria-label="Closed windows"></div>
+      <div class="tb-clock" id="tbClock">--:--</div>
     </div>
   </body>
 </html>

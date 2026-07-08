@@ -1,3 +1,161 @@
+/* ============================================================================
+   Window manager: dragging, focus (z-index), close → taskbar tray, restore.
+   Shared across all three .xp-window elements (#xpShoyan, #xpMc, #xpPlayer).
+   ============================================================================ */
+
+const TASKBAR_HEIGHT = 30;
+let topZ = 100;          // current top z-index for windows; taskbar sits at 100000
+
+// Registry of every managed window — used to render tray buttons.
+// `getTitle` lets the music player feed its dynamic track title into the tray.
+const windowMeta = {
+  xpShoyan: { icon: '🔨', title: 'SHOYAN' },
+  xpMc:     { icon: '🟩', title: 'play.lemoncloud.org' },
+  xpPlayer: { icon: '🎵', getTitle: () => document.getElementById('xpTitlebarText').textContent || 'now_playing.mp3' }
+};
+
+const closedWindows = new Set();   // window IDs currently hidden in the tray
+const tbTray = document.getElementById('tbTray');
+
+function bringToFront(win) {
+  topZ += 1;
+  win.style.zIndex = topZ;
+}
+
+function closeWindow(win) {
+  const id = win.id;
+  if (!windowMeta[id]) return;
+  if (id === 'xpPlayer') widget.pause();   // keep existing music-pause-on-close behaviour
+  win.classList.add('closed');
+  closedWindows.add(id);
+  renderTray();
+}
+
+function restoreWindow(id) {
+  const win = document.getElementById(id);
+  if (!win) return;
+  win.classList.remove('closed');
+  closedWindows.delete(id);
+  bringToFront(win);
+  renderTray();
+}
+
+function getWindowTitle(id) {
+  const meta = windowMeta[id];
+  if (!meta) return id;
+  return meta.getTitle ? meta.getTitle() : meta.title;
+}
+
+function renderTray() {
+  tbTray.innerHTML = '';
+  closedWindows.forEach(id => {
+    const meta = windowMeta[id];
+    if (!meta) return;
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'tb-item';
+    btn.title = `Restore ${getWindowTitle(id)}`;
+    btn.innerHTML =
+      `<span class="tb-item-icon">${meta.icon}</span>` +
+      `<span class="tb-item-label"></span>`;
+    btn.querySelector('.tb-item-label').textContent = getWindowTitle(id);
+    btn.addEventListener('click', () => restoreWindow(id));
+    tbTray.appendChild(btn);
+  });
+}
+
+/* ----- Dragging (Pointer Events: covers mouse + touch + pen in one path) ----- */
+function makeDraggable(win) {
+  const titlebar = win.querySelector('.xp-titlebar');
+  if (!titlebar) return;
+
+  let dragging = false;
+  let startX = 0, startY = 0;
+  let startLeft = 0, startTop = 0;
+  let movedToExplicitPos = false;   // has this window been dragged at least once?
+
+  titlebar.addEventListener('pointerdown', (e) => {
+    // Ignore presses on the min/close buttons
+    if (e.target.closest('.xp-titlebar-buttons')) return;
+    if (win.classList.contains('closed')) return;
+
+    dragging = true;
+    startX = e.clientX;
+    startY = e.clientY;
+
+    // On first drag ever: convert from `bottom/right` anchoring to explicit left/top,
+    // so subsequent style.left/top changes don't fight the original CSS.
+    if (!movedToExplicitPos) {
+      const rect = win.getBoundingClientRect();
+      startLeft = rect.left;
+      startTop = rect.top;
+      win.style.left = startLeft + 'px';
+      win.style.top = startTop + 'px';
+      win.style.right = 'auto';
+      win.style.bottom = 'auto';
+      movedToExplicitPos = true;
+    } else {
+      startLeft = parseFloat(win.style.left) || 0;
+      startTop  = parseFloat(win.style.top)  || 0;
+    }
+
+    win.classList.add('dragging');
+    bringToFront(win);
+    try { titlebar.setPointerCapture(e.pointerId); } catch (_) {}
+    e.preventDefault();
+  });
+
+  titlebar.addEventListener('pointermove', (e) => {
+    if (!dragging) return;
+    const dx = e.clientX - startX;
+    const dy = e.clientY - startY;
+    let newLeft = startLeft + dx;
+    let newTop  = startTop  + dy;
+
+    // Clamp so the titlebar stays visible and the window can't slide under the taskbar.
+    newTop = Math.max(0, Math.min(newTop, window.innerHeight - TASKBAR_HEIGHT - 24));
+    newLeft = Math.min(newLeft, window.innerWidth - 40);                // keep ≥ 40px visible on the right
+    newLeft = Math.max(newLeft, 40 - win.offsetWidth);                  // keep ≥ 40px visible on the left
+
+    win.style.left = newLeft + 'px';
+    win.style.top  = newTop  + 'px';
+  });
+
+  function endDrag(e) {
+    if (!dragging) return;
+    dragging = false;
+    win.classList.remove('dragging');
+    try { titlebar.releasePointerCapture(e.pointerId); } catch (_) {}
+  }
+  titlebar.addEventListener('pointerup', endDrag);
+  titlebar.addEventListener('pointercancel', endDrag);
+}
+
+// Wire up all three windows
+['xpShoyan', 'xpMc', 'xpPlayer'].forEach(id => {
+  const w = document.getElementById(id);
+  if (w) {
+    makeDraggable(w);
+    // Click anywhere on the window brings it to front, not just the titlebar.
+    w.addEventListener('pointerdown', () => bringToFront(w));
+  }
+});
+
+// ----- Taskbar clock -----
+function updateClock() {
+  const now = new Date();
+  const h = String(now.getHours()).padStart(2, '0');
+  const m = String(now.getMinutes()).padStart(2, '0');
+  document.getElementById('tbClock').textContent = `${h}:${m}`;
+}
+updateClock();
+setInterval(updateClock, 10000);
+
+/* ============================================================================
+   SoundCloud music player — original behaviour preserved, with close routed
+   through closeWindow() so the player goes to the tray instead of vanishing.
+   ============================================================================ */
+
 const playlist = [
   "https://soundcloud.com/korewamoemoemoe/connection",
   "https://soundcloud.com/telemist/envy",
@@ -33,6 +191,7 @@ function refreshNowPlaying() {
     } else {
       artwork.style.backgroundImage = '';
     }
+    renderTray();   // keep tray button label fresh if the music window is closed
   });
 }
 function loadTrack(index, autoplay) {
@@ -79,10 +238,7 @@ widget.bind(SC.Widget.Events.PLAY_PROGRESS, (data) => {
 minBtn.addEventListener('click', () => {
   win.classList.toggle('minimized');
 });
-closeBtn.addEventListener('click', () => {
-  widget.pause();
-  win.style.display = 'none';
-});
+closeBtn.addEventListener('click', () => closeWindow(win));
 
 // Volume slider: 0-100, feeds straight into the SoundCloud widget API
 volumeSlider.addEventListener('input', () => {
@@ -91,20 +247,87 @@ volumeSlider.addEventListener('input', () => {
   volumeIcon.textContent = vol === 0 ? '🔇' : (vol < 50 ? '🔉' : '🔊');
 });
 
-/* ===== SHOYAN construction window controls =====
-   The GIF itself opens YouTube via the wrapping <a> tag in index.html,
-   so we only need to wire up the XP-style minimize / close buttons here. */
+/* ============================================================================
+   SHOYAN construction window — minimize toggles body, close → tray.
+   The GIF itself opens YouTube via the wrapping <a> tag in index.html.
+   ============================================================================ */
+
 const shoyanWin = document.getElementById('xpShoyan');
 const shoyanMinBtn = document.getElementById('shoyanMinBtn');
 const shoyanCloseBtn = document.getElementById('shoyanCloseBtn');
 
 if (shoyanMinBtn) {
-  shoyanMinBtn.addEventListener('click', () => {
-    shoyanWin.classList.toggle('minimized');
-  });
+  shoyanMinBtn.addEventListener('click', () => shoyanWin.classList.toggle('minimized'));
 }
 if (shoyanCloseBtn) {
-  shoyanCloseBtn.addEventListener('click', () => {
-    shoyanWin.style.display = 'none';
-  });
+  shoyanCloseBtn.addEventListener('click', () => closeWindow(shoyanWin));
 }
+
+/* ============================================================================
+   Minecraft server status window — free mcsrvstat.us API, refresh every 60s.
+   Version/Software fields removed per request; only Status, Players, MOTD shown.
+   ============================================================================ */
+
+const MC_SERVER = 'play.lemoncloud.org';
+const mcWin       = document.getElementById('xpMc');
+const mcMinBtn    = document.getElementById('mcMinBtn');
+const mcCloseBtn  = document.getElementById('mcCloseBtn');
+const mcStatusEl  = document.getElementById('mcStatus');
+const mcPlayersEl = document.getElementById('mcPlayers');
+const mcMotdEl    = document.getElementById('mcMotd');
+const mcIconEl    = document.getElementById('mcIcon');
+
+function escapeHtml(s) {
+  return String(s).replace(/[&<>"']/g, c => ({
+    '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;'
+  })[c]);
+}
+
+function setOffline(msg) {
+  mcStatusEl.textContent = msg || 'Offline';
+  mcStatusEl.className = 'mc-value mc-offline';
+}
+
+async function refreshMcStatus() {
+  // Bust cache so we always get fresh player counts (mcsrvstat caches server-side anyway)
+  const url = `https://api.mcsrvstat.us/3/${encodeURIComponent(MC_SERVER)}?t=${Date.now()}`;
+  try {
+    const res = await fetch(url);
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    const data = await res.json();
+    if (!data.online) {
+      setOffline('Offline');
+      mcPlayersEl.textContent = '--';
+      mcMotdEl.innerHTML       = '';
+      return;
+    }
+    mcStatusEl.textContent = 'Online';
+    mcStatusEl.className   = 'mc-value mc-online';
+
+    const online = data.players?.online ?? 0;
+    const max    = data.players?.max    ?? 0;
+    mcPlayersEl.textContent = `${online} / ${max}`;
+
+    if (data.icon) {
+      mcIconEl.style.backgroundImage = `url('${data.icon}')`;
+    }
+
+    const motdLines = data.motd?.clean || [];
+    mcMotdEl.innerHTML = motdLines
+      .map(line => `<div>${escapeHtml(line) || '&nbsp;'}</div>`)
+      .join('');
+  } catch (e) {
+    console.error('MC status fetch failed:', e);
+    setOffline('Error');
+  }
+}
+
+if (mcMinBtn) {
+  mcMinBtn.addEventListener('click', () => mcWin.classList.toggle('minimized'));
+}
+if (mcCloseBtn) {
+  mcCloseBtn.addEventListener('click', () => closeWindow(mcWin));
+}
+
+refreshMcStatus();
+setInterval(refreshMcStatus, 60000); // refresh every 60s

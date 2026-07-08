@@ -1,17 +1,137 @@
 body {
     font-family: Sans-serif;
     text-align: center;
-    margin-top: 50px;
+    margin-top: 30px;
+    margin-bottom: 50px; /* clears the taskbar */
+    /* Background image: cover + fixed so it fills the viewport without scrolling artifacts */
+    background-image: url('hell on Earth cute 90s.jpg');
+    background-size: cover;
+    background-position: center center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    min-height: 100vh;
 }
 .construction {
     margin-top: 20px;
     border: 2px solid #000;
 }
 
+/* ===== ASCII art title (CHURI in block letters) ===== */
+.ascii-title {
+    font-family: 'Courier New', Consolas, monospace;
+    font-size: 9px;
+    line-height: 1;
+    letter-spacing: 0;
+    color: #ffffff;
+    text-shadow:
+        1px 1px 0 #000,
+       -1px 1px 0 #000,
+        1px -1px 0 #000,
+       -1px -1px 0 #000,
+        0 0 6px rgba(0,0,0,0.9);
+    margin: 0 auto 16px;
+    padding: 10px 12px;
+    display: inline-block;
+    background: rgba(0,0,0,0.45);
+    border: 1px solid rgba(255,255,255,0.25);
+    border-radius: 4px;
+    white-space: pre;
+    overflow-x: auto;
+    max-width: calc(100vw - 24px);
+    text-align: left;
+}
+
+/* ===== Main body box (XP Notepad-styled, static, centered) ===== */
+.main-box {
+    width: 640px;
+    max-width: calc(100vw - 32px);
+    margin: 0 auto 24px;
+    background: #ece9d8;            /* XP window body grey */
+    border: 1px solid #0831d9;
+    border-radius: 8px 8px 3px 3px;
+    box-shadow: 2px 2px 12px rgba(0,0,0,0.5);
+    font-family: Tahoma, Verdana, sans-serif;
+    overflow: hidden;
+    text-align: left;
+}
+.main-box-titlebar {
+    height: 24px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    padding: 2px 6px;
+    background: linear-gradient(180deg, #0058e0 0%, #3d94ff 8%, #1567e6 40%, #0850d8 88%, #003bcb 100%);
+    color: white;
+    font-weight: bold;
+    font-size: 12px;
+    text-shadow: 1px 1px 1px rgba(0,0,0,0.4);
+}
+.main-box-icon { font-size: 13px; }
+.main-box-body {
+    padding: 16px 20px 14px;
+    background: #ffffff;            /* notepad-white body */
+    border-top: 1px solid #aca899;
+}
+.intro-quote {
+    margin: 0 0 14px;
+    padding: 8px 12px;
+    border-left: 3px solid #0831d9;
+    background: #f4f6fb;
+    font-style: italic;
+    font-size: 13px;
+    line-height: 1.5;
+    color: #222;
+}
+.intro-quote cite {
+    display: block;
+    margin-top: 6px;
+    font-size: 11px;
+    font-style: normal;
+    color: #666;
+    text-align: right;
+}
+.intro-text {
+    margin: 0 0 16px;
+    font-size: 13px;
+    line-height: 1.6;
+    color: #222;
+}
+/* 4-column link row pinned to the bottom of the box */
+.link-columns {
+    display: flex;
+    gap: 8px;
+    margin-top: 16px;
+    padding-top: 12px;
+    border-top: 1px dashed #aca899;
+}
+.link-cell {
+    flex: 1;
+    min-width: 0;
+    display: block;
+    padding: 8px 6px;
+    text-align: center;
+    text-decoration: none;
+    font-size: 12px;
+    font-weight: bold;
+    color: #1a3a6a;
+    background: linear-gradient(180deg, #ffffff 0%, #d9e4f5 45%, #b7cbe8 55%, #d9e4f5 100%);
+    border: 1px solid #7a9cc6;
+    border-radius: 4px;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.8), 1px 1px 2px rgba(0,0,0,0.2);
+    transition: filter 0.1s;
+}
+.link-cell:hover {
+    filter: brightness(1.15);
+    color: #0831d9;
+}
+.link-cell:active {
+    box-shadow: inset 1px 1px 3px rgba(0,0,0,0.3);
+}
+
 /* ===== Music Widget ===== */
 .xp-window {
     position: fixed;
-    bottom: 16px;
+    bottom: 38px;
     right: 16px;
     width: 320px;
     display: flex;
@@ -22,10 +142,16 @@ body {
     box-shadow: 2px 2px 8px rgba(0,0,0,0.4);
     font-family: Tahoma, Verdana, sans-serif;
     overflow: hidden;
-    z-index: 9999;
+    z-index: 100;
     user-select: none;
     text-align: left; /* override the page's centered text-align */
 }
+/* While being dragged: drop shadows get snappier, no transitions, slight lift */
+.xp-window.dragging {
+    box-shadow: 4px 4px 14px rgba(0,0,0,0.5);
+    cursor: grabbing;
+}
+.xp-window.closed { display: none !important; }
 
 /* Titlebar spans the full width, on top */
 .xp-titlebar {
@@ -271,9 +397,9 @@ body {
 .xp-window-left {
     position: fixed;
     left: 16px;
-    bottom: 90px; /* lifted off the floor so it's not flush with the bottom */
+    bottom: 110px; /* lifted off the taskbar so it's not flush with the bottom */
     width: 420px;
-    z-index: 9999;
+    z-index: 100;
 }
 
 /* Body override: single image, no flex row */
@@ -302,4 +428,195 @@ body {
 }
 .shoyan-link:hover .construction {
     filter: brightness(1.08) saturate(1.1);
+}
+
+/* ===== Minecraft Server Status Window =====
+   Sits under the SHOYAN window, offset a bit further right than
+   shoyan's left:16 (so left:96), pinned just above the taskbar. */
+.xp-window-mc {
+    position: fixed;
+    left: 96px;          /* offset right of shoyan's left:16 */
+    bottom: 38px;        /* clears the 30px taskbar + a sliver of gap */
+    width: 260px;
+    z-index: 100;
+}
+.xp-body-mc {
+    padding: 8px 10px 10px;
+    display: flex;
+    flex-direction: row;
+    gap: 8px;
+    align-items: flex-start;
+}
+.xp-window.minimized .xp-body-mc { display: none; }
+
+.mc-icon {
+    width: 48px;
+    height: 48px;
+    flex-shrink: 0;
+    border: 1px solid #000;
+    background: #b7cbe8 center/cover no-repeat;
+    image-rendering: pixelated;        /* keep MC favicon crisp */
+    image-rendering: crisp-edges;
+}
+.mc-info {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+}
+.mc-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 6px;
+    font-size: 11px;
+    line-height: 1.5;
+}
+.mc-label {
+    color: #555;
+    flex-shrink: 0;
+}
+.mc-value {
+    color: #222;
+    font-weight: bold;
+    text-align: right;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    min-width: 0;
+}
+.mc-online  { color: #1a7a1a; }
+.mc-offline { color: #c4281a; }
+.mc-motd {
+    margin-top: 4px;
+    padding-top: 4px;
+    border-top: 1px solid #b7cbe8;
+    font-size: 10px;
+    color: #333;
+    line-height: 1.3;
+    white-space: pre-wrap;
+    word-break: break-word;
+    min-height: 1.3em;
+}
+.mc-motd:empty::before {
+    content: "(no MOTD)";
+    color: #999;
+    font-style: italic;
+}
+
+/* ===== XP Taskbar / Tray for closed windows ===== */
+#taskbar {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 0 4px 0 0;
+    background: linear-gradient(180deg, #2387f0 0%, #2c8cf5 3%, #1e6fd6 8%, #1a66c8 92%, #154bb0 100%);
+    border-top: 1px solid #0a3a8c;
+    box-shadow: 0 -1px 0 rgba(255,255,255,0.3) inset;
+    font-family: Tahoma, Verdana, sans-serif;
+    z-index: 100000;   /* always above windows */
+    user-select: none;
+}
+
+/* "start" button — XP-style green-ish gradient slab on the left */
+.tb-start {
+    flex-shrink: 0;
+    height: 30px;
+    padding: 0 12px 0 8px;
+    margin-right: 4px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    border: 1px solid rgba(0,0,0,0.3);
+    border-top: none;
+    border-bottom: none;
+    border-radius: 0;
+    background: linear-gradient(180deg, #5fb836 0%, #4a9e26 50%, #3c8a1d 100%);
+    color: white;
+    font-style: italic;
+    font-weight: bold;
+    font-size: 14px;
+    text-shadow: 1px 1px 1px rgba(0,0,0,0.5);
+    cursor: pointer;
+}
+.tb-start:hover { filter: brightness(1.08); }
+.tb-start:active { filter: brightness(0.95); }
+.tb-start-flag {
+    font-size: 10px;
+    transform: skewX(-12deg);
+    display: inline-block;
+}
+
+/* Tray area: holds one button per closed window */
+.tb-tray {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    gap: 3px;
+    min-width: 0;
+    overflow: hidden;
+}
+.tb-tray:empty::before {
+    content: "";
+    /* invisible spacer — keeps layout stable when nothing is closed */
+}
+
+/* Tray button for each closed window — XP-style raised taskbar button */
+.tb-item {
+    min-width: 100px;
+    max-width: 180px;
+    height: 22px;
+    padding: 0 8px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    border: 1px solid rgba(0,0,0,0.25);
+    border-radius: 3px;
+    background: linear-gradient(180deg, #4d93f0 0%, #2f6fc8 50%, #2157a8 100%);
+    color: white;
+    font-size: 11px;
+    font-weight: bold;
+    text-shadow: 1px 1px 1px rgba(0,0,0,0.4);
+    cursor: pointer;
+    overflow: hidden;
+}
+.tb-item:hover {
+    background: linear-gradient(180deg, #6aa8ff 0%, #3d7fd8 50%, #2f64b8 100%);
+}
+.tb-item:active {
+    background: linear-gradient(180deg, #1a4a8a 0%, #2c6dc8 100%);
+}
+.tb-item-icon {
+    flex-shrink: 0;
+    font-size: 12px;
+}
+.tb-item-label {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    min-width: 0;
+}
+
+/* Clock on the far right, in a sunken bezel */
+.tb-clock {
+    flex-shrink: 0;
+    height: 22px;
+    margin-left: 4px;
+    padding: 0 10px;
+    display: flex;
+    align-items: center;
+    border: 1px solid rgba(0,0,0,0.35);
+    border-radius: 3px;
+    background: linear-gradient(180deg, #1c5fbf 0%, #11429a 100%);
+    color: white;
+    font-size: 11px;
+    font-weight: bold;
+    text-shadow: 1px 1px 1px rgba(0,0,0,0.4);
+    box-shadow: inset 1px 1px 2px rgba(0,0,0,0.3);
 }
