@@ -2,9 +2,10 @@ const TASKBAR_HEIGHT = 30;
 let topZ = 100;
 
 const windowMeta = {
-  xpShoyan: { icon: '🔨', title: 'SHOYAN' },
-  xpMc:     { icon: '🟩', title: 'play.lemoncloud.org' },
-  xpPlayer: { icon: '🎵', getTitle: () => document.getElementById('xpTitlebarText').textContent || 'now_playing.mp3' }
+  xpShoyan:        { icon: '🔨', title: 'SHOYAN' },
+  xpMc:            { icon: '🟩', title: 'play.lemoncloud.org' },
+  xpPlayer:        { icon: '🎵', getTitle: () => document.getElementById('xpTitlebarText').textContent || 'now_playing.mp3' },
+  xpTestimonials:  { icon: '💬', title: 'ai_testimonials.txt' }
 };
 
 const closedWindows = new Set();
@@ -119,7 +120,7 @@ function makeDraggable(win) {
   titlebar.addEventListener('pointercancel', endDrag);
 }
 
-['xpShoyan', 'xpMc', 'xpPlayer'].forEach(id => {
+['xpShoyan', 'xpMc', 'xpPlayer', 'xpTestimonials'].forEach(id => {
   const w = document.getElementById(id);
   if (w) {
     makeDraggable(w);
@@ -235,6 +236,17 @@ if (shoyanMinBtn) {
 }
 if (shoyanCloseBtn) {
   shoyanCloseBtn.addEventListener('click', () => closeWindow(shoyanWin));
+}
+
+const testimonialsWin       = document.getElementById('xpTestimonials');
+const testimonialsMinBtn    = document.getElementById('testimonialsMinBtn');
+const testimonialsCloseBtn  = document.getElementById('testimonialsCloseBtn');
+
+if (testimonialsMinBtn) {
+  testimonialsMinBtn.addEventListener('click', () => testimonialsWin.classList.toggle('minimized'));
+}
+if (testimonialsCloseBtn) {
+  testimonialsCloseBtn.addEventListener('click', () => closeWindow(testimonialsWin));
 }
 
 const MC_SERVER = 'play.lemoncloud.org';
