@@ -299,3 +299,58 @@ if (mcCloseBtn) {
 
 refreshMcStatus();
 setInterval(refreshMcStatus, 60000);
+
+const fumo = document.getElementById('fumo');
+let fumoDragging = false;
+let fumoStartX = 0, fumoStartY = 0;
+let fumoStartLeft = 0, fumoStartTop = 0;
+let fumoMoved = false;
+
+fumo.addEventListener('pointerdown', (e) => {
+  fumoDragging = true;
+  fumoStartX = e.clientX;
+  fumoStartY = e.clientY;
+  if (!fumoMoved) {
+    const rect = fumo.getBoundingClientRect();
+    fumoStartLeft = rect.left;
+    fumoStartTop = rect.top;
+    fumo.style.left = fumoStartLeft + 'px';
+    fumo.style.top = fumoStartTop + 'px';
+    fumo.style.right = 'auto';
+    fumoMoved = true;
+  } else {
+    fumoStartLeft = parseFloat(fumo.style.left) || 0;
+    fumoStartTop = parseFloat(fumo.style.top) || 0;
+  }
+  fumo.style.cursor = 'grabbing';
+  try { fumo.setPointerCapture(e.pointerId); } catch (_) {}
+  e.preventDefault();
+});
+
+fumo.addEventListener('pointermove', (e) => {
+  if (!fumoDragging) return;
+  fumo.style.left = (fumoStartLeft + (e.clientX - fumoStartX)) + 'px';
+  fumo.style.top = (fumoStartTop + (e.clientY - fumoStartY)) + 'px';
+});
+
+function endFumoDrag(e) {
+  if (!fumoDragging) return;
+  fumoDragging = false;
+  fumo.style.cursor = 'grab';
+  try { fumo.releasePointerCapture(e.pointerId); } catch (_) {}
+}
+fumo.addEventListener('pointerup', endFumoDrag);
+fumo.addEventListener('pointercancel', endFumoDrag);
+
+const startBtn = document.getElementById('startBtn');
+const startOverlay = document.createElement('div');
+startOverlay.id = 'startOverlay';
+startOverlay.textContent = '*starts*';
+document.body.appendChild(startOverlay);
+
+startBtn.addEventListener('click', () => {
+  startOverlay.classList.add('visible');
+  setTimeout(() => {
+    startOverlay.classList.remove('visible');
+  }, 1000);
+});
